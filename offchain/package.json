@@ -1,0 +1,18 @@
+{
+  "name": "allocado",
+  "version": "1.0.0",
+  "description": "Offchain Allocarno API",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+     "compile": "tsc"
+  },
+  "author": "cm_morgado@hotmail.com",
+  "license": "ISC",
+  "dependencies": {
+    "@lucid-evolution/lucid": "^0.4.27"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3"
+  }
+}
