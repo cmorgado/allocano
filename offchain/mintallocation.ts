@@ -1,10 +1,10 @@
-import { Address, applyDoubleCborEncoding, applyParamsToScript, Assets, Data, Emulator, fromText, LucidEvolution, MintingPolicy, mintingPolicyToId, PolicyId, Redeemer, SpendingValidator, Unit, validatorToAddress, Lucid, fromUnit, toText, UTxO, getAddressDetails } from '@lucid-evolution/lucid';
+import { Address, Assets, Data, fromText, LucidEvolution, Redeemer, Unit, UTxO, getAddressDetails } from '@lucid-evolution/lucid';
 import * as u from "./utils";
 import * as env from "./env/laceTreasury"
 export async function mintAllocation(adminAddress: Address, allocationHash: string,
     lucid: LucidEvolution) {
 
-    console.log("------------- start mint allocation -----------------");
+    console.log("start mint allocation "+adminAddress+" -----------------");
  
     const unitAllocano: Unit = u.allocanoPolicyId + fromText(allocationHash);
 
@@ -41,6 +41,6 @@ export async function mintAllocation(adminAddress: Address, allocationHash: stri
     const signedTx = await tx.sign.withWallet().complete();
   
     const txHash = await signedTx.submit();
-    console.log("buy with referral tid: " + txHash);
+    console.log("mint tid: " + txHash);
 
 }

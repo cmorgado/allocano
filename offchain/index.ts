@@ -5,8 +5,8 @@ import * as mint from "./mintallocation"
 import * as env from "./env/laceTreasury"
 import * as u from "./utils"
 let treasuryAccount = generateEmulatorAccount({ lovelace: 1_200_000_00n });
-let accountA = generateEmulatorAccount({ ["lovelace"]: 254_5441_528n, [u.unitAllocano]: 1n });
-let accountB = generateEmulatorAccount({ ["lovelace"]: 12_002_000_000n , [u.unitAllocano]: 1n});
+let accountA = generateEmulatorAccount({ ["lovelace"]: 111_111_111n, [u.unitAllocano]: 1n });
+let accountB = generateEmulatorAccount({ ["lovelace"]: 222_222_222n, [u.unitAllocano]: 1n });
 // export const accountC = generateEmulatorAccount({ lovelace: 12_003_000_000n });
 // export const accountD = generateEmulatorAccount({ lovelace: 12_004_000_000n });
 // export const accountE = generateEmulatorAccount({ lovelace: 12_005_000_000n });
@@ -23,38 +23,35 @@ const AccountsList: EmulatorAccount[] = [
 const emulator = new Emulator(AccountsList);
 
 export async function mainStart() {
-    //treasuryAccount.address = env.laceTreasuryAddress;
-    // treasuryAccount.seedPhrase = env.laceTreasurySeed,
-
-
 
     console.clear();
-    console.log("---------------------------clea------------------------------------------------");
-    console.log("treasury", treasuryAccount.address);
-    console.log("treasury", treasuryAccount.seedPhrase);
+    console.log("---------------------------------------------------------------------------");
     let lucid = await Lucid(emulator, "Custom");
     emulator.awaitBlock(1);
 
 
     lucid.selectWallet.fromSeed(treasuryAccount.seedPhrase);
-    const va: UTxO[] = await lucid.utxosAt(treasuryAccount.address)//, u.unitAllocano)
-    console.log("va", va);
+
     // await admin.createAdmin(accountA.address, lucid);
     emulator.awaitBlock(1);
 
     lucid.selectWallet.fromSeed(accountA.seedPhrase);
-   
+
     await mint.mintAllocation(accountA.address, "Allocano 0", lucid);
     emulator.awaitBlock(10);
     await mint.mintAllocation(accountA.address, "Allocano 1", lucid);
     emulator.awaitBlock(10);
-    await mint.mintAllocation(accountA.address, "Allocano 2", lucid);
+    lucid.selectWallet.fromSeed(accountB.seedPhrase);
+    await mint.mintAllocation(accountB.address, "Allocano 2", lucid);
     emulator.awaitBlock(10);
     emulator.log();
-    await mint.mintAllocation(accountA.address, "Allocano 1", lucid);
+    lucid.selectWallet.fromSeed(accountA.seedPhrase);
+    await burn.allocation(accountA.address, "Allocano 1", lucid);
     emulator.awaitBlock(10);
-    await mint.mintAllocation(accountA.address, "Allocano 2", lucid);
+    lucid.selectWallet.fromSeed(accountB.seedPhrase);
+    await burn.allocation(accountB.address, "Allocano 2", lucid);
     emulator.awaitBlock(10);
+    emulator.log()
 }
 
 // deno run -A --unstable-sloppy-imports  index.ts

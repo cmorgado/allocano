@@ -1,4 +1,4 @@
-import { applyDoubleCborEncoding, Data, fromText, MintingPolicy, mintingPolicyToId, networkToId, PolicyId, SpendingValidator, Unit, validatorToAddress } from "@lucid-evolution/lucid";
+import { applyDoubleCborEncoding, Data, fromText, MintingPolicy, mintingPolicyToId, PolicyId, SpendingValidator, Unit, validatorToAddress } from "@lucid-evolution/lucid";
 import allocanoContract from "./compiled/allocano.signed.plutus.json" with { type: "json" };
 
 
