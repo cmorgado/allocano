@@ -4,8 +4,8 @@ import * as env from "./env/laceTreasury"
 export async function allocation(adminAddress: Address, allocationHash: string,
     lucid: LucidEvolution) {
 
-    console.log("start create admin");
-    console.log("allocanoPolicyId", u.allocanoPolicyId);
+    console.log("------------------------ start create admin ------------------------");
+    
     const unitAllocano: Unit = u.allocanoPolicyId + fromText(allocationHash);
 
     const adminAsset: Assets = {
@@ -18,13 +18,7 @@ export async function allocation(adminAddress: Address, allocationHash: string,
         allocation_hash: fromText(allocationHash)
     };
     const txRedeemer: Redeemer = Data.to<u.AllocanoRedeemer>(mintRedeemer, u.AllocanoRedeemer);
-    let phk: string = getAddressDetails(adminAddress)?.paymentCredential?.hash || "";
-
-    const mintDatum: u.AllocanoDatum = {
-        customerAllocanoPhk: fromText(phk),
-        allocation_hash: fromText(allocationHash)
-    };
-    const txDatum: Redeemer = Data.to<u.AllocanoDatum>(mintDatum, u.AllocanoDatum);
+ 
 
     const va: UTxO[] = await lucid.utxosAtWithUnit(adminAddress, u.unitAllocano)
     const remove: UTxO[] = await lucid.utxosAtWithUnit(u.allocanoAddress, unitAllocano)    
@@ -39,7 +33,7 @@ export async function allocation(adminAddress: Address, allocationHash: string,
         .complete();
 
     const signedTx = await tx.sign.withWallet().complete();
-    console.log("signed");
+
     const txHash = await signedTx.submit();
     console.log("buy with referral tid: " + txHash);
 
