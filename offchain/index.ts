@@ -1,8 +1,7 @@
-import { Lucid, generateSeedPhrase, Assets, LucidEvolution, Emulator, EmulatorAccount, generatePrivateKey, Required, Address, MintingPolicy, generateEmulatorAccount, validatorToAddress, PolicyId, mintingPolicyToId, applyDoubleCborEncoding, Unit, fromText, getAddressDetails, UTxO, TxOutput, OutRef } from "@lucid-evolution/lucid";
-import * as admin from "./createadmin"
+import { Lucid, Emulator, EmulatorAccount, generateEmulatorAccount, LucidEvolution, Blockfrost } from "@lucid-evolution/lucid";
 import * as burn from "./burnallocation"
 import * as mint from "./mintallocation"
-import * as env from "./env/laceTreasury"
+import * as admin from "./createadmin"
 import * as u from "./utils"
 let treasuryAccount = generateEmulatorAccount({ lovelace: 1_200_000_00n });
 let accountA = generateEmulatorAccount({ ["lovelace"]: 111_111_111n, [u.unitAllocano]: 1n });
@@ -14,6 +13,8 @@ let accountB = generateEmulatorAccount({ ["lovelace"]: 222_222_222n, [u.unitAllo
 // export const accountG = generateEmulatorAccount({ lovelace: 12_007_000_000n });
 
 
+// deno run -A --unstable-sloppy-imports  index.ts
+
 
 const AccountsList: EmulatorAccount[] = [
     treasuryAccount, accountA, accountB
@@ -21,6 +22,21 @@ const AccountsList: EmulatorAccount[] = [
 ]
 
 const emulator = new Emulator(AccountsList);
+
+export async function connectToBrowser() {
+    const lucid: LucidEvolution = await Lucid(
+        new Blockfrost("uri", "key"),
+        "Preview"
+
+    );
+    const api = await window.cardano[0].enable();
+    lucid.selectWallet.fromAPI(api);
+
+    await admin.createAdmin(accountA.address, lucid);
+    await mint.mintAllocation(accountA.address, "Allocano 0", lucid);
+    await burn.allocation(accountA.address, "Allocano 0", lucid);
+}
+
 
 export async function mainStart() {
 
