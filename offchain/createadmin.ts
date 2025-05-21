@@ -7,19 +7,19 @@ export async function createAdmin(
     buyerAddress: Address, lucid: LucidEvolution) {
 
     console.log("start create admin");
-    console.log("allocanoPolicyId", u.allocanoPolicyId);
+
  
 
     const createAdminRedeemer: u.AllocanoRedeemer = {
         action: 1n,
-        allocation_hash: fromText("Allocano")
+        allocation_hash: "Allocano AdminToken_PREV"
     };
     const adminAsset: Assets = {
 
         [u.unitAllocano]: 1n,
 
     }
-    console.log("adminAsset", adminAsset);
+
     const txRedeemer: Redeemer = Data.to<u.AllocanoRedeemer>(createAdminRedeemer, u.AllocanoRedeemer);
 
     const tx = await lucid

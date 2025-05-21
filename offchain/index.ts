@@ -4,9 +4,9 @@ import * as burn from "./burnallocation"
 import * as mint from "./mintallocation"
 import * as env from "./env/laceTreasury"
 import * as u from "./utils"
-const treasuryAccount = generateEmulatorAccount({ lovelace: 1_200_000_00n });
-const accountA = generateEmulatorAccount({ lovelace: 1_200_000_000n });
-const accountB = generateEmulatorAccount({ lovelace: 12_002_000_000n });
+let treasuryAccount = generateEmulatorAccount({ lovelace: 1_200_000_00n });
+let accountA = generateEmulatorAccount({ ["lovelace"]: 254_5441_528n, [u.unitAllocano]: 1n });
+let accountB = generateEmulatorAccount({ lovelace: 12_002_000_000n });
 // export const accountC = generateEmulatorAccount({ lovelace: 12_003_000_000n });
 // export const accountD = generateEmulatorAccount({ lovelace: 12_004_000_000n });
 // export const accountE = generateEmulatorAccount({ lovelace: 12_005_000_000n });
@@ -15,7 +15,7 @@ const accountB = generateEmulatorAccount({ lovelace: 12_002_000_000n });
 
 
 
-export const AccountsList: EmulatorAccount[] = [
+const AccountsList: EmulatorAccount[] = [
     treasuryAccount, accountA, accountB
     // , accountC, accountD, accountE, accountF, accountG
 ]
@@ -35,41 +35,24 @@ export async function mainStart() {
     let lucid = await Lucid(emulator, "Custom");
     emulator.awaitBlock(1);
 
-    console.log("---------------------------transfer 1------------------------------------------------");
-    lucid.selectWallet.fromAddress(treasuryAccount.address,
 
-        [
-            {
-                address:
-                    "addr_test1qr25xnnj0c44wc0xr69wunaal63ahx6kqz5anz0t0dl6xa7k0s7kanz0a9wey098yds788qs7uhxgcqtc96h9x2vchcqaf7r46",
-                assets: { ["lovelace"]: 254_5441_528n },
-                txHash:
-                    "ba4b9fb110ef328f84f080f277af89e3c40a8bc3aa64eb1605e445f3b7f293b7",
-                outputIndex: 1,
-            },
-        ],
-    );
+    lucid.selectWallet.fromSeed(treasuryAccount.seedPhrase);
     const va: UTxO[] = await lucid.utxosAt(treasuryAccount.address)//, u.unitAllocano)
     console.log("va", va);
-    await admin.createAdmin(accountA.address, lucid);
-    emulator.awaitBlock(10);
-    lucid.selectWallet.fromAddress(accountA.address,
-
-        [
-            {
-                address:
-                    accountA.address,
-                assets: { ["lovelace"]: 254_5441_528n, [u.unitAllocano]: 1n },
-                txHash:
-                    "ba4b9fb110ef328f84f080f277af89e3c40a8bc3aa64eb1605e445f3b7f293b7",
-                outputIndex: 1,
-            },
-        ],
-    );
-    emulator.awaitBlock(10);
-    await mint.mintAllocation(accountA.address, "Allocano", lucid);
-
-    // emulator.log();
+    // await admin.createAdmin(accountA.address, lucid);
+    emulator.awaitBlock(1);
+    lucid.selectWallet.fromSeed(accountA.seedPhrase);
+    emulator.awaitBlock(1);
+     await mint.mintAllocation(accountA.address, "Allocano 0", lucid);
+    emulator.awaitBlock(1);
+    await mint.mintAllocation(accountA.address, "Allocano 1", lucid);
+    emulator.awaitBlock(1);
+    await mint.mintAllocation(accountA.address, "Allocano 2", lucid);
+    emulator.awaitBlock(1);
+    emulator.log();
+    await burn.allocation (accountA.address, "Allocano 2", lucid);
+     emulator.awaitBlock(1);
+    emulator.log();
 }
 
 // deno run -A --unstable-sloppy-imports  index.ts

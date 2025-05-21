@@ -4,7 +4,7 @@ import * as env from "./env/laceTreasury"
 export async function mintAllocation(adminAddress: Address, allocationHash: string,
     lucid: LucidEvolution) {
 
-    console.log("start mint admin");
+    console.log("start mint allocation");
     console.log("allocanoPolicyId", u.allocanoPolicyId);
     const unitAllocano: Unit = u.allocanoPolicyId + fromText(allocationHash);
 
@@ -21,7 +21,7 @@ export async function mintAllocation(adminAddress: Address, allocationHash: stri
     let phk: string = getAddressDetails(adminAddress)?.paymentCredential?.hash || "";
 
     const mintDatum: u.AllocanoDatum = {
-        customerAllocanoPhk: fromText(phk),
+        customerAllocanoPhk: phk,
         allocation_hash: fromText(allocationHash)
     };
     const txDatum: Redeemer = Data.to<u.AllocanoDatum>(mintDatum, u.AllocanoDatum);
@@ -34,7 +34,7 @@ export async function mintAllocation(adminAddress: Address, allocationHash: stri
         .mintAssets(adminAsset, txRedeemer)
         .attach.MintingPolicy(u.allocanoMintingScript)
         .pay.ToAddress(env.laceTreasuryAddress, { lovelace: 2_000_000n })
-        .pay.ToAddressWithData(u.allocanoAddress, { kind: "inline", value: txDatum })
+        .pay.ToAddressWithData(u.allocanoAddress, { kind: "inline", value: txDatum }, adminAsset)
         .addSigner(adminAddress)
         .complete();
 

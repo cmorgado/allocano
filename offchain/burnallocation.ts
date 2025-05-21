@@ -1,7 +1,7 @@
 import { Address, applyDoubleCborEncoding, applyParamsToScript, Assets, Data, Emulator, fromText, LucidEvolution, MintingPolicy, mintingPolicyToId, PolicyId, Redeemer, SpendingValidator, Unit, validatorToAddress, Lucid, fromUnit, toText, UTxO, getAddressDetails } from '@lucid-evolution/lucid';
 import * as u from "./utils";
 import * as env from "./env/laceTreasury"
-export async function mintAllocation(adminAddress: Address, allocationHash: string,
+export async function allocation(adminAddress: Address, allocationHash: string,
     lucid: LucidEvolution) {
 
     console.log("start create admin");
