@@ -14,7 +14,7 @@ export async function mintAllocation(adminAddress: Address, allocationHash: stri
 
     }
     const mintRedeemer: u.AllocanoRedeemer = {
-        action: 2n,
+        action: 3n,
         allocation_hash: fromText(allocationHash)
     };
     const txRedeemer: Redeemer = Data.to<u.AllocanoRedeemer>(mintRedeemer, u.AllocanoRedeemer);
@@ -31,7 +31,7 @@ export async function mintAllocation(adminAddress: Address, allocationHash: stri
     const tx = await lucid
         .newTx()
         .readFrom(va)
-        .collectFrom(remove, txDatum)
+        .collectFrom(remove, txRedeemer)
         .mintAssets(adminAsset, txRedeemer)
         .attach.MintingPolicy(u.allocanoMintingScript)
         .pay.ToAddress(env.laceTreasuryAddress, { lovelace: 2_000_000n })

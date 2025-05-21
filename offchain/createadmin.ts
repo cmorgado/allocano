@@ -1,22 +1,22 @@
-import { Address, applyDoubleCborEncoding, applyParamsToScript, Assets, Data, Emulator, fromText, LucidEvolution, MintingPolicy, mintingPolicyToId, PolicyId, Redeemer, SpendingValidator, Unit, validatorToAddress, Lucid, fromUnit, toText, UTxO, getAddressDetails } from '@lucid-evolution/lucid';
+import { Address, applyDoubleCborEncoding, applyParamsToScript, Assets, Data, Emulator, fromText, LucidEvolution, MintingPolicy, mintingPolicyToId, PolicyId, Redeemer, SpendingValidator, Unit, validatorToAddress, Lucid, fromUnit, toText, UTxO, getAddressDetails, Constr } from '@lucid-evolution/lucid';
 import * as u from "./utils";
+import * as env from "./env/laceTreasury"
 
 
-
-export async function createAdmin(treasuryAddress: Address,
+export async function createAdmin(
     buyerAddress: Address, lucid: LucidEvolution) {
 
     console.log("start create admin");
     console.log("allocanoPolicyId", u.allocanoPolicyId);
-    const unitAllocano: Unit = u.allocanoPolicyId + fromText("Allocarno AdminToken_PREV");
+ 
 
-    const createAdminRedeemer:u.AllocanoRedeemer = {
+    const createAdminRedeemer: u.AllocanoRedeemer = {
         action: 1n,
-        allocation_hash: fromText("Allocano AdminToken_PREV")
+        allocation_hash: fromText("Allocano")
     };
     const adminAsset: Assets = {
 
-        [unitAllocano]: 1n,
+        [u.unitAllocano]: 1n,
 
     }
     console.log("adminAsset", adminAsset);
@@ -25,9 +25,9 @@ export async function createAdmin(treasuryAddress: Address,
     const tx = await lucid
         .newTx()
         .mintAssets(adminAsset, txRedeemer)
+        .pay.ToAddress(buyerAddress, { ...adminAsset, lovelace: 20_000_000n })
         .attach.MintingPolicy(u.allocanoMintingScript)
-        .pay.ToAddress(buyerAddress, { ...adminAsset, lovelace: 2_000_000n })
-        .addSigner(treasuryAddress)
+        .addSigner(env.laceTreasuryAddress)
         .complete();
 
     const signedTx = await tx.sign.withWallet().complete();
@@ -36,6 +36,4 @@ export async function createAdmin(treasuryAddress: Address,
     console.log("admin token created referral tid: " + txHash);
 }
 
-function fromAddress(treasuryAddress: string): any {
-    throw new Error('Function not implemented.');
-}
+

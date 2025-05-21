@@ -12,11 +12,12 @@ export const allocanoSpendingScript: SpendingValidator = {
     type: "PlutusV3"
 }
 export const allocanoPolicyId: PolicyId = mintingPolicyToId(allocanoMintingScript);
-export const unitAllocano: Unit = allocanoPolicyId + fromText("Allocarno AdminToken_PREV");
+export const unitAllocano: Unit = allocanoPolicyId + fromText("Allocano AdminToken_PREV");
 export const allocanoAddress = validatorToAddress("Preview", allocanoSpendingScript);
+
 const AllocanoRedeemerShape = Data.Object({
     action: Data.Integer({ minimum: 0, maximum: 3 }),
-    allocation_hash: Data.Bytes(),
+    allocation_hash: Data.Nullable(Data.Bytes()),
 });
 export type AllocanoRedeemer = Data.Static<typeof AllocanoRedeemerShape>;
 export const AllocanoRedeemer = AllocanoRedeemerShape as unknown as AllocanoRedeemer;

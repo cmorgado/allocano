@@ -4,7 +4,7 @@ import * as env from "./env/laceTreasury"
 export async function mintAllocation(adminAddress: Address, allocationHash: string,
     lucid: LucidEvolution) {
 
-    console.log("start create admin");
+    console.log("start mint admin");
     console.log("allocanoPolicyId", u.allocanoPolicyId);
     const unitAllocano: Unit = u.allocanoPolicyId + fromText(allocationHash);
 
@@ -26,8 +26,8 @@ export async function mintAllocation(adminAddress: Address, allocationHash: stri
     };
     const txDatum: Redeemer = Data.to<u.AllocanoDatum>(mintDatum, u.AllocanoDatum);
 
-    const va: UTxO[] = await lucid.utxosAtWithUnit(adminAddress, u.unitAllocano)
-
+    const va: UTxO[] = await lucid.utxosAt(adminAddress)//, u.unitAllocano)
+    console.log("va", va);
     const tx = await lucid
         .newTx()
         .readFrom(va)

@@ -1,9 +1,12 @@
 import { Lucid, generateSeedPhrase, Assets, LucidEvolution, Emulator, EmulatorAccount, generatePrivateKey, Required, Address, MintingPolicy, generateEmulatorAccount, validatorToAddress, PolicyId, mintingPolicyToId, applyDoubleCborEncoding, Unit, fromText, getAddressDetails, UTxO, TxOutput, OutRef } from "@lucid-evolution/lucid";
 import * as admin from "./createadmin"
+import * as burn from "./burnallocation"
+import * as mint from "./mintallocation"
 import * as env from "./env/laceTreasury"
-export const treasuryAccount = generateEmulatorAccount({ lovelace: 1_200_000_00n });
-export const accountA = generateEmulatorAccount({ lovelace: 1_200_000_000n });
-export const accountB = generateEmulatorAccount({ lovelace: 12_002_000_000n });
+import * as u from "./utils"
+const treasuryAccount = generateEmulatorAccount({ lovelace: 1_200_000_00n });
+const accountA = generateEmulatorAccount({ lovelace: 1_200_000_000n });
+const accountB = generateEmulatorAccount({ lovelace: 12_002_000_000n });
 // export const accountC = generateEmulatorAccount({ lovelace: 12_003_000_000n });
 // export const accountD = generateEmulatorAccount({ lovelace: 12_004_000_000n });
 // export const accountE = generateEmulatorAccount({ lovelace: 12_005_000_000n });
@@ -33,46 +36,39 @@ export async function mainStart() {
     emulator.awaitBlock(1);
 
     console.log("---------------------------transfer 1------------------------------------------------");
-    lucid.selectWallet.fromSeed(treasuryAccount.seedPhrase);
-    console.log("treasury", treasuryAccount.address);
-    console.log("treasury", treasuryAccount.seedPhrase);
-    const pk = getAddressDetails(treasuryAccount.address).paymentCredential
-    console.log("pk", pk);
+    lucid.selectWallet.fromAddress(treasuryAccount.address,
 
-    const tx = await lucid
-        .newTx()
-        .pay.ToAddress(accountB.address, { lovelace: 50_000_000n })
-        .addSigner(treasuryAccount.address)
-        .complete();
-
-    const signedTx = await tx.sign.withWallet().complete();
-    console.log("signed");
-    const txHash = await signedTx.submit();
-    console.log("id: " + txHash);
-
+        [
+            {
+                address:
+                    "addr_test1qr25xnnj0c44wc0xr69wunaal63ahx6kqz5anz0t0dl6xa7k0s7kanz0a9wey098yds788qs7uhxgcqtc96h9x2vchcqaf7r46",
+                assets: { ["lovelace"]: 254_5441_528n },
+                txHash:
+                    "ba4b9fb110ef328f84f080f277af89e3c40a8bc3aa64eb1605e445f3b7f293b7",
+                outputIndex: 1,
+            },
+        ],
+    );
+    const va: UTxO[] = await lucid.utxosAt(treasuryAccount.address)//, u.unitAllocano)
+    console.log("va", va);
+    await admin.createAdmin(accountA.address, lucid);
     emulator.awaitBlock(10);
+    lucid.selectWallet.fromAddress(accountA.address,
 
-
-    console.log("---------------------------transfer 2------------------------------------------------");
-    lucid.selectWallet.fromSeed(accountB.seedPhrase);
-    const tx3 = await lucid
-        .newTx()
-        .pay.ToAddress(accountA.address, { lovelace: 50_000_000n })
-        .addSigner(accountB.address)
-        .complete();
-
-    const signedTx3 = await tx3.sign.withWallet().complete();
-    console.log("signed");
-    const txHash3 = await signedTx3.submit();
-    console.log("id: " + txHash3);
+        [
+            {
+                address:
+                    accountA.address,
+                assets: { ["lovelace"]: 254_5441_528n, [u.unitAllocano]: 1n },
+                txHash:
+                    "ba4b9fb110ef328f84f080f277af89e3c40a8bc3aa64eb1605e445f3b7f293b7",
+                outputIndex: 1,
+            },
+        ],
+    );
     emulator.awaitBlock(10);
+    await mint.mintAllocation(accountA.address, "Allocano", lucid);
 
-
-
-    lucid = await Lucid(emulator, "Custom");
-    lucid.selectWallet.fromSeed(accountB.seedPhrase);
-    await admin.createAdmin(accountB.address, accountA.address, lucid);
-    emulator.awaitBlock(10);
     // emulator.log();
 }
 
