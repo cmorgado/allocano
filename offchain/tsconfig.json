@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "target": "es2022",                           
+    "lib": [ "es2020", "DOM" ],                   
+    "module": "esnext",                           
+    "moduleResolution": "node",                   
+    "resolveJsonModule": true,                    
+    "sourceMap": true,                            
+    "removeComments": true,                       
+    "noEmitOnError": true,                        
+    "esModuleInterop": true,                      
+    "forceConsistentCasingInFileNames": true,     
+    "strict": true,                               
+    "noImplicitAny": true,                        
+    "skipLibCheck": true                          
+  }
+}
