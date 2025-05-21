@@ -4,7 +4,7 @@ import * as env from "./env/laceTreasury"
 export async function allocation(adminAddress: Address, allocationHash: string,
     lucid: LucidEvolution) {
 
-    console.log("------------------------ start create admin ------------------------");
+    console.log("------------------------ start burn ------------------------");
     
     const unitAllocano: Unit = u.allocanoPolicyId + fromText(allocationHash);
 
